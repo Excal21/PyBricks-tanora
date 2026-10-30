@@ -6,37 +6,31 @@ from pybricks.tools import wait, StopWatch
 
 hub = PrimeHub()
 
-sebessegek = []
-
-bal_motor  = Motor(Port.A, Direction.COUNTERCLOCKWISE)
-jobb_motor = Motor(Port.C)
-
-színérzékelő = ColorSensor(Port.B) 
-
-mindketmotor = DriveBase(bal_motor, jobb_motor, 50, 10)
-
-jobb_motor_sebességei = []
-bal_motor_sebességei  = []
+bal_motor = Motor(Port.B, Direction.COUNTERCLOCKWISE)
+jobb_motor = Motor(Port.A)
 
 
-while Button.RIGHT not in hub.buttons.pressed():
-    jobb_motor_sebességei.append(jobb_motor.speed())
-    bal_motor_sebességei.append(bal_motor.speed())
-    
-    wait(100)
+jobb_kerek_sebessegek = []
+bal_kerek_sebessegek  = []
 
-print(jobb_motor_sebességei)
-print(bal_motor_sebességei)
+felvetel_aktiv = True
 
+while felvetel_aktiv:
+    #Ebben a whileban fogjuk feljegyezni, hogy a kerekek mennyit mentek
+    jobb_kerek_sebessegek.append(jobb_motor.speed(10))
+    bal_kerek_sebessegek.append(bal_motor.speed(10))
 
-print('Megnyomva')
+    wait(10)
 
-#Kérdés: ugyanakkora a két lista? Igen/Nem Miért?
-for i in range(len(jobb_motor_sebességei)):
-    jobb_motor.run(jobb_motor_sebességei[i])
-    bal_motor.run(bal_motor_sebességei[i])
-    wait(100)
+    lenyomott_gombok = hub.buttons.pressed() #Az éppen lenyomott gombok halmaza
+    if Button.LEFT in lenyomott_gombok and Button.RIGHT in lenyomott_gombok:
+        felvetel_aktiv = False
 
-mindketmotor.stop()
+print(jobb_kerek_sebessegek)
 
-print('Vége')
+#Ide meg a whileon kívül írunk majd valamit, ami visszaolvassa
+for hanyadik in range(len(jobb_kerek_sebessegek)):
+    bal_motor.run(bal_kerek_sebessegek[hanyadik])
+
+    jobb_motor.run(     jobb_kerek_sebessegek[hanyadik]      )
+    wait(10)
